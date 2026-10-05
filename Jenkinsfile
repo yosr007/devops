@@ -26,17 +26,18 @@ pipeline {
 
         stage('SonarQube') {
             steps {
-                dir('backend') {
-                    sh '''
-                        mvn sonar:sonar \
-                        -Dsonar.projectKey=backend \
-                        -Dsonar.host.url=http://localhost:9000 \
-                        -Dsonar.login="$SONAR_TOKEN"
-                    '''
+                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                    dir('backend') {
+                        sh '''
+                            mvn sonar:sonar \
+                            -Dsonar.projectKey=backend \
+                            -Dsonar.host.url=http://localhost:9000 \
+                            -Dsonar.login="$SONAR_TOKEN"
+                        '''
+                    }
                 }
             }
         }
-
         stage('Unit Tests') {
             steps {
                 dir('backend') {
