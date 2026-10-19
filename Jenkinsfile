@@ -88,8 +88,17 @@ pipeline {
         }
 
         stage('Deploy') {
-            steps {
-                sh 'docker compose up -d'
+	   steps {
+              sh '''
+               echo "Déploiement du backend..."
+               docker compose up -d --no-deps --build backend
+
+               echo "Déploiement du frontend..."
+               docker compose up -d --no-deps --build frontend
+
+               echo "Vérification des conteneurs..."
+               docker compose ps
+             '''
             }
         }
     }
